@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             StartButton = new Button();
             MapSelector = new ComboBox();
             MapPreview = new PictureBox();
@@ -43,6 +44,7 @@
             ServerNameBox = new TextBox();
             PrivateCheckbox = new CheckBox();
             SourceButton = new Button();
+            SaveConfigButton = new Button();
             ((System.ComponentModel.ISupportInitialize)MapPreview).BeginInit();
             SuspendLayout();
             // 
@@ -52,19 +54,21 @@
             StartButton.Location = new Point(455, 271);
             StartButton.Name = "StartButton";
             StartButton.Size = new Size(81, 57);
-            StartButton.TabIndex = 0;
+            StartButton.TabIndex = 6;
             StartButton.Text = "Start Server";
             StartButton.UseVisualStyleBackColor = true;
+            StartButton.Click += StartButton_Click;
             // 
             // MapSelector
             // 
-            MapSelector.DropDownStyle = ComboBoxStyle.Simple;
+            MapSelector.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            MapSelector.AutoCompleteSource = AutoCompleteSource.ListItems;
             MapSelector.FormattingEnabled = true;
             MapSelector.Location = new Point(12, 263);
             MapSelector.MaxDropDownItems = 99;
             MapSelector.Name = "MapSelector";
             MapSelector.Size = new Size(254, 23);
-            MapSelector.TabIndex = 1;
+            MapSelector.TabIndex = 0;
             MapSelector.SelectedIndexChanged += MapSelector_SelectedIndexChanged;
             // 
             // MapPreview
@@ -81,7 +85,7 @@
             NextPreviewButton.Location = new Point(272, 259);
             NextPreviewButton.Name = "NextPreviewButton";
             NextPreviewButton.Size = new Size(44, 29);
-            NextPreviewButton.TabIndex = 3;
+            NextPreviewButton.TabIndex = 8;
             NextPreviewButton.Text = ">>";
             NextPreviewButton.UseVisualStyleBackColor = true;
             NextPreviewButton.Click += NextPreviewButton_Click;
@@ -93,7 +97,7 @@
             ServerDescBox.Name = "ServerDescBox";
             ServerDescBox.PlaceholderText = "What players read while considering";
             ServerDescBox.Size = new Size(214, 23);
-            ServerDescBox.TabIndex = 4;
+            ServerDescBox.TabIndex = 2;
             // 
             // label1
             // 
@@ -120,7 +124,7 @@
             MaxPlayersBox.Name = "MaxPlayersBox";
             MaxPlayersBox.PlaceholderText = "Number of players including AI";
             MaxPlayersBox.Size = new Size(214, 23);
-            MaxPlayersBox.TabIndex = 6;
+            MaxPlayersBox.TabIndex = 3;
             // 
             // label3
             // 
@@ -138,7 +142,7 @@
             MaxCarsBox.Name = "MaxCarsBox";
             MaxCarsBox.PlaceholderText = "Number of cars per player";
             MaxCarsBox.Size = new Size(214, 23);
-            MaxCarsBox.TabIndex = 8;
+            MaxCarsBox.TabIndex = 4;
             // 
             // label4
             // 
@@ -165,7 +169,7 @@
             ServerNameBox.Name = "ServerNameBox";
             ServerNameBox.PlaceholderText = "What players see before joining";
             ServerNameBox.Size = new Size(214, 23);
-            ServerNameBox.TabIndex = 11;
+            ServerNameBox.TabIndex = 1;
             // 
             // PrivateCheckbox
             // 
@@ -173,7 +177,7 @@
             PrivateCheckbox.Location = new Point(322, 223);
             PrivateCheckbox.Name = "PrivateCheckbox";
             PrivateCheckbox.Size = new Size(97, 19);
-            PrivateCheckbox.TabIndex = 13;
+            PrivateCheckbox.TabIndex = 5;
             PrivateCheckbox.Text = "Private Server";
             PrivateCheckbox.UseVisualStyleBackColor = true;
             // 
@@ -183,16 +187,28 @@
             SourceButton.Location = new Point(12, 303);
             SourceButton.Name = "SourceButton";
             SourceButton.Size = new Size(67, 25);
-            SourceButton.TabIndex = 14;
+            SourceButton.TabIndex = 7;
             SourceButton.Text = "Source";
             SourceButton.UseVisualStyleBackColor = true;
             SourceButton.Click += SourceButton_Click;
+            // 
+            // SaveConfigButton
+            // 
+            SaveConfigButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            SaveConfigButton.Location = new Point(368, 271);
+            SaveConfigButton.Name = "SaveConfigButton";
+            SaveConfigButton.Size = new Size(81, 57);
+            SaveConfigButton.TabIndex = 13;
+            SaveConfigButton.Text = "Save Config";
+            SaveConfigButton.UseVisualStyleBackColor = true;
+            SaveConfigButton.Click += SaveConfigButton_Click;
             // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(548, 340);
+            Controls.Add(SaveConfigButton);
             Controls.Add(SourceButton);
             Controls.Add(PrivateCheckbox);
             Controls.Add(label5);
@@ -208,8 +224,9 @@
             Controls.Add(MapPreview);
             Controls.Add(MapSelector);
             Controls.Add(StartButton);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Main";
-            Text = "Beam-MP Server Configurator";
+            Text = "Beam-MP Server Configurator - D. Preston Peek (Version 0.9.0)";
             ((System.ComponentModel.ISupportInitialize)MapPreview).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -232,5 +249,6 @@
         private TextBox ServerNameBox;
         private CheckBox PrivateCheckbox;
         private Button SourceButton;
+        private Button SaveConfigButton;
     }
 }
