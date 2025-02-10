@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeamMPServerLauncher", "BeamMPServerLauncher.csproj", "{5C2F4A10-E779-42D1-9C0C-6BADD2A5BEDB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5C2F4A10-E779-42D1-9C0C-6BADD2A5BEDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C2F4A10-E779-42D1-9C0C-6BADD2A5BEDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C2F4A10-E779-42D1-9C0C-6BADD2A5BEDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C2F4A10-E779-42D1-9C0C-6BADD2A5BEDB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C5D64EEF-4D71-40E3-A638-C5FCC358CFD5}
+	EndGlobalSection
+EndGlobal
