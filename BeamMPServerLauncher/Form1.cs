@@ -364,21 +364,28 @@ namespace BeamMPServerLauncher
             maxPlayersStr = maxPlayersStr.Trim();
             serverConfig = serverConfig.Replace("MaxPlayers = " + maxPlayersStr, "MaxPlayers = " + MaxPlayersBox.Text.Trim());
 
-            //Map info file
-            string infoFile = serverConfig.Split("Map = \"")[1]; 
-            infoFile = infoFile.Split("\"")[0];
-            infoFile = infoFile.Trim();
-            try
-            {
-                serverConfig = serverConfig.Replace("Map = \"/" + infoFile + "\"", "Map = \"/" + selectedMap.jsonInfo.Trim() + "\"");
-            }
-            catch (System.NullReferenceException ex)
-            {
-                ErrorWindow errorWindow = new ErrorWindow(ErrorCode.MapNotFound, ex.Message);
-                return;
-            }
-
             File.WriteAllText(serverConfigFile, serverConfig);
+
+            //Map info file
+            string[] serverConfigLines = File.ReadAllLines(serverConfigFile);
+            for (int i = 0; i < serverConfigLines.Length; i++)
+            {
+                if (serverConfigLines[i].Contains("Map = "))
+                {
+                    selectedMap.jsonInfo = selectedMap.jsonInfo.Replace("\\", "/");
+                    serverConfigLines[i] = "Map = \"/" + selectedMap.jsonInfo.Trim() + "\"";
+                }
+            }
+            File.WriteAllLines(serverConfigFile, serverConfigLines);
+            //try
+            //{
+            //    serverConfig = serverConfig.Replace("Map = \"/" + infoFile + "\"", "Map = \"/" + selectedMap.jsonInfo.Trim() + "\"");
+            //}
+            //catch (System.NullReferenceException ex)
+            //{
+            //    ErrorWindow errorWindow = new ErrorWindow(ErrorCode.MapNotFound, ex.Message);
+            //    return;
+            //}
         }
 
         private void ConfigureMods()
