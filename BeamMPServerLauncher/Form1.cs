@@ -39,11 +39,13 @@ namespace BeamMPServerLauncher
                 InitializeComponent();
                 MakeDirs();
                 ReadInMapOptions();
-                //ReadInServerInfo(selectedMap);
+                ReadInServerInfo(selectedMap);
             }
             catch(Exception ex)
             {
+                ErrorWindow error = new ErrorWindow(ErrorCode.PassMessage, ex.Message);
                 WriteToLog(ex);
+                return;
             }
         }
 
@@ -161,9 +163,16 @@ namespace BeamMPServerLauncher
             }
             else if (MapPreview.ImageLocation == null)
             {
-                MapPreview.ImageLocation = beamMap.previews[0];
+                try
+                {
+                    MapPreview.ImageLocation = beamMap.previews[0];
+                }
+                catch(IndexOutOfRangeException ex)
+                {
+                    ErrorWindow errorWindow = new ErrorWindow(ErrorCode.PreviewsNotFound, ex.Message);
+                    WriteToLog("Had a problem loading image previews.\n\tMapPreview.ImageLocation = " + MapPreview.ImageLocation + "\n\t" + ex.Message);
+                }
             }
-            WriteToLog("MapPreview.ImageLocation = " + MapPreview.ImageLocation);
         }
 
         private void SelectMap(BeamMap beamMap)
@@ -200,15 +209,15 @@ namespace BeamMPServerLauncher
                 string[] unzippedInfo = SaveUnzippedInfo(beamMap);
                 beamMap.unzippedInfo = unzippedInfo[0];
                 beamMap.jsonInfo = unzippedInfo[1];
-                //beamMap.savedInfo = Path.Combine(beamMap.unzippedInfo, "info.json");
-                //beamMap.previews = GetStoredPreviews(beamMap);
+                beamMap.savedInfo = Path.Combine(beamMap.unzippedInfo, "info.json");
+                beamMap.previews = GetStoredPreviews(beamMap);
 
-                ////select first map in list
-                //if (firstTime)
-                //{
-                //    SelectMap(beamMap);
-                //    firstTime = false;
-                //}
+                //select first map in list
+                if (firstTime)
+                {
+                    SelectMap(beamMap);
+                    firstTime = false;
+                }
             }
         }
 
@@ -223,7 +232,7 @@ namespace BeamMPServerLauncher
                 ZipFile.ExtractToDirectory(beamMap.path, unzippedFile);
 
                 string nameNoExt = Path.GetFileNameWithoutExtension(beamMap.path);
-                string levelsParent = Path.Combine(unzippedFile, nameNoExt, "levels");
+                string levelsParent = Path.Combine(unzippedFile, "levels");
                 string[] dirs = Directory.GetDirectories(levelsParent);
                 string levelsPath = Path.Combine(levelsParent, dirs[0]);
                 string infoPath = Path.Combine(levelsPath, "info.json");
@@ -255,7 +264,22 @@ namespace BeamMPServerLauncher
 
         private void ReadInServerInfo(BeamMap beamMap)
         {
-            string serverConfig = File.ReadAllText(serverConfigFile);
+            //get server.toml
+            string serverConfig = "";
+            try
+            {
+                serverConfig = File.ReadAllText(serverConfigFile);
+            }
+            catch (System.IO.FileNotFoundException ex) 
+            {
+                ErrorWindow error = new ErrorWindow(ErrorCode.ServerNotFound, ex.Message);
+                return;
+            }
+            catch(Exception ex)
+            {
+                ErrorWindow error = new ErrorWindow(ErrorCode.Unknown, ex.Message);
+                return;
+            }
 
             string nameStr = serverConfig.Split("Name = \"")[1];
             nameStr = nameStr.Split("\"")[0];
@@ -316,7 +340,15 @@ namespace BeamMPServerLauncher
             string infoFile = serverConfig.Split("Map = \"")[1];
             infoFile = infoFile.Split("\"")[0];
             infoFile = infoFile.Trim();
-            serverConfig = serverConfig.Replace("Map = \"" + infoFile + "\"", "Map = \"" + selectedMap.jsonInfo.Trim() + "\"");
+            try
+            {
+                serverConfig = serverConfig.Replace("Map = \"" + infoFile + "\"", "Map = \"" + selectedMap.jsonInfo.Trim() + "\"");
+            }
+            catch(System.NullReferenceException ex)
+            {
+                ErrorWindow errorWindow = new ErrorWindow(ErrorCode.MapNotFound, ex.Message);
+                return;
+            }
 
             File.WriteAllText(serverConfigFile, serverConfig);
         }
