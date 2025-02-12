@@ -32,7 +32,7 @@ namespace BeamMPServerLauncher
             {
                 case ErrorCode.ServerNotFound:
                     error.title = "Error - ServerConfig.toml not found";
-                    error.message = "Couldn't find ServerConfig.toml. Please copy it to this directory and open the Server Launcher again" + extraMsg;
+                    error.message = "Couldn't find ServerConfig.toml. Please copy it to this directory and open the Server Launcher again. " + extraMsg;
                     error.ok = "Ok, Close";
                     error.alt = "Open Directory";
                     error.okFunc = OkFunction.CloseApp;
@@ -40,7 +40,7 @@ namespace BeamMPServerLauncher
                     break;
                 case ErrorCode.MapNotFound:
                     error.title = "Error - No map files found";
-                    error.message = "There are no maps in the 'maps' folder. Please copy a map zip file to this directory and start the server again" + extraMsg;
+                    error.message = "There are no maps in the 'maps' folder. Please copy a map zip file to this directory and start the server again. " + extraMsg;
                     error.ok = "Ok";
                     error.alt = "Open Directory";
                     error.okFunc = OkFunction.CloseErrorWindow;
@@ -48,7 +48,7 @@ namespace BeamMPServerLauncher
                     break;
                 case ErrorCode.PreviewsNotFound:
                     error.title = "Error - No preview image files found";
-                    error.message = "There was an error locating preview image files for the selected map." + extraMsg;
+                    error.message = "There was an error locating preview image files for the selected map. " + extraMsg;
                     error.ok = "Ok";
                     error.alt = "Open Directory";
                     error.okFunc = OkFunction.CloseErrorWindow;
@@ -64,7 +64,7 @@ namespace BeamMPServerLauncher
                     break;
                 case ErrorCode.Unknown:
                     error.title = "Error = Unknown Error";
-                    error.message = "An unknown error occurred. See log for more info." + extraMsg;
+                    error.message = "An unknown error occurred. See log for more info. " + extraMsg;
                     error.ok = "Ok";
                     error.alt = "Open Log File";
                     error.okFunc = OkFunction.CloseErrorWindow;

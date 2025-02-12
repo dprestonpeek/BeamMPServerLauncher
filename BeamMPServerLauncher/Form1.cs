@@ -31,15 +31,19 @@ namespace BeamMPServerLauncher
         string logFile = Path.Combine(Directory.GetCurrentDirectory(), "log.txt");
 
         List<BeamMap> maps = new List<BeamMap>();
+        ProgressWindow progress;
 
         public Main()
         {
+            progress = new ProgressWindow();
+            progress.Show();
             try
             {
                 InitializeComponent();
                 MakeDirs();
                 ReadInMapOptions();
                 ReadInServerInfo(selectedMap);
+                progress.Close();
             }
             catch(Exception ex)
             {
@@ -88,7 +92,6 @@ namespace BeamMPServerLauncher
             file += DateTime.Now + " " + exception.Message + " : " + exception.Data;
             File.WriteAllText(logFile, file);
         }
-
 
         private void MakeDirs()
         {
@@ -197,13 +200,19 @@ namespace BeamMPServerLauncher
         private void ReadInMapOptions()
         {
             bool firstTime = true;
-            foreach (string map in Directory.GetFiles(mapDir))
+            string[] files = Directory.GetFiles(mapDir);
+            for (int i = 0; i < files.Length; i++) 
+            //foreach (string map in Directory.GetFiles(mapDir))
             {
+                //update progress bar steps
+                progress.SetStepValue(100 / files.Length);
+                progress.WriteToProgressWindow("Need to uzip " + files.Length + "...", false);
+
                 //create the new map object and save path
                 BeamMap beamMap = new BeamMap();
-                beamMap.path = map;
+                beamMap.path = files[i];
                 //get the human readable name and save it
-                string readableMap = GetReadableName(map);
+                string readableMap = GetReadableName(files[i]);
                 MapSelector.Items.Add(readableMap);
                 beamMap.name = readableMap;
                 string[] unzippedInfo = SaveUnzippedInfo(beamMap);
@@ -227,11 +236,12 @@ namespace BeamMPServerLauncher
             string infoJsonPath = "";
             if (!Directory.Exists(unzippedInfo))
             {
+                string nameNoExt = Path.GetFileNameWithoutExtension(beamMap.path);
                 string unzippedFile = Path.Combine(unzippedInfo, "zipFile");
+                progress.WriteToProgressWindow("Unzipping " + nameNoExt + "...", true);
                 Directory.CreateDirectory(unzippedFile);
                 ZipFile.ExtractToDirectory(beamMap.path, unzippedFile);
 
-                string nameNoExt = Path.GetFileNameWithoutExtension(beamMap.path);
                 string levelsParent = Path.Combine(unzippedFile, "levels");
                 string[] dirs = Directory.GetDirectories(levelsParent);
                 string levelsPath = Path.Combine(levelsParent, dirs[0]);
@@ -239,6 +249,7 @@ namespace BeamMPServerLauncher
                 string newInfoPath = Path.Combine(unzippedInfo, "info.json");
                 File.Move(infoPath, newInfoPath);
                 string[] previews = ReadInPreviewFilenames(newInfoPath);
+                progress.WriteToProgressWindow("Done unzipping " + nameNoExt + ".", false);
                 foreach (string previewFile in previews)
                 {
                     string previewPath = Path.Combine(levelsPath, previewFile);
