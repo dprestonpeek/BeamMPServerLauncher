@@ -221,6 +221,9 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Main";
             Text = "Beam-MP Server Configurator - D. Preston Peek (Version 0.9.5)";
+            WindowState = FormWindowState.Minimized;
+            Shown += Main_Shown;
+            Enter += Main_Enter;
             ((System.ComponentModel.ISupportInitialize)MapPreview).EndInit();
             ResumeLayout(false);
             PerformLayout();

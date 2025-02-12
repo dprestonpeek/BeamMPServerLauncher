@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProgressWindow));
             LoadingDetails = new RichTextBox();
             LoadingProgressBar = new ProgressBar();
+            backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             SuspendLayout();
             // 
             // LoadingDetails
@@ -49,6 +50,13 @@
             LoadingProgressBar.Style = ProgressBarStyle.Continuous;
             LoadingProgressBar.TabIndex = 1;
             // 
+            // backgroundWorker1
+            // 
+            backgroundWorker1.WorkerReportsProgress = true;
+            backgroundWorker1.DoWork += backgroundWorker1_DoWork;
+            backgroundWorker1.ProgressChanged += backgroundWorker1_ProgressChanged;
+            backgroundWorker1.RunWorkerCompleted += backgroundWorker1_RunWorkerCompleted;
+            // 
             // ProgressWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -59,6 +67,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "ProgressWindow";
             Text = "Importing Content...";
+            TopMost = true;
             ResumeLayout(false);
         }
 
@@ -66,5 +75,6 @@
 
         private RichTextBox LoadingDetails;
         private ProgressBar LoadingProgressBar;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }

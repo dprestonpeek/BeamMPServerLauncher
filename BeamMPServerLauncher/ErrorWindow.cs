@@ -25,11 +25,13 @@ namespace BeamMPServerLauncher
             Error error = ErrorCodes.GetErrorInfo(errorCode, extraMsg);
 
             Text = error.title;
-            ErrorMessage.Text = error.message + extraMsg;
+            ErrorMessage.Text = error.message + " " + extraMsg;
             ErrorOKButton.Text = error.ok;
             ErrorAltButton.Text = error.alt;
             okFunction = error.okFunc;
             altFunction = error.altFunc;
+
+            ErrorAltButton.Visible = altFunction != AltFunction.None;
 
             ShowDialog();
         }

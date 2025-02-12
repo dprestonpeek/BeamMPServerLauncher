@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.IO.Compression;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -23,29 +24,35 @@ namespace BeamMPServerLauncher
     {
         public static BeamMap selectedMap;
 
-        string mapDir = Path.Combine(Directory.GetCurrentDirectory(), "maps");
-        string modDir = Path.Combine(Directory.GetCurrentDirectory(), "mods");
-        string launcherDataDir = Path.Combine(Directory.GetCurrentDirectory(), "data");
-        string serverConfigFile = Path.Combine(Directory.GetCurrentDirectory(), "ServerConfig.toml");
-        string resourceDir = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Client");
-        string logFile = Path.Combine(Directory.GetCurrentDirectory(), "log.txt");
+        public static string mapDir = Path.Combine(Directory.GetCurrentDirectory(), "maps");
+        public static string modDir = Path.Combine(Directory.GetCurrentDirectory(), "mods");
+        public static string launcherDataDir = Path.Combine(Directory.GetCurrentDirectory(), "data");
+        public static string serverConfigFile = Path.Combine(Directory.GetCurrentDirectory(), "ServerConfig.toml");
+        public static string resourceDir = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Client");
+        public static string logFile = Path.Combine(Directory.GetCurrentDirectory(), "log.txt");
+        public static string jsonInfo = Path.Combine(launcherDataDir, "json.txt");
 
-        List<BeamMap> maps = new List<BeamMap>();
+        public static Main instance;
+        public static bool loading = true;
+
+        public static List<BeamMap> maps = new List<BeamMap>();
         ProgressWindow progress;
+        Task progressBarTask;
+
+        public static BeamMap mapToSelectLater = new BeamMap();
+        public static List<string> mapNamesToAddLater = new List<string>();
 
         public Main()
         {
+            instance = this;
             progress = new ProgressWindow();
-            progress.Show();
             try
             {
                 InitializeComponent();
                 MakeDirs();
-                ReadInMapOptions();
-                ReadInServerInfo(selectedMap);
-                progress.Close();
+                progress.ImportMaps();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow error = new ErrorWindow(ErrorCode.PassMessage, ex.Message);
                 WriteToLog(ex);
@@ -53,7 +60,114 @@ namespace BeamMPServerLauncher
             }
         }
 
-        private void WriteToLog(string message)
+        public void ContinueLoading()
+        {
+            try
+            {
+                if (mapToSelectLater.name != "")
+                {
+                    SelectMap(mapToSelectLater);
+                }
+                if (mapNamesToAddLater.Count > 1)
+                {
+                    foreach (string name in mapNamesToAddLater)
+                    {
+                        AddToMapSelector(name);
+                    }
+                }
+                ReadInJsonFileLocations();
+
+                ReadInServerInfo(selectedMap);
+                if (progress != null)
+                {
+                    progress.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorWindow error = new ErrorWindow(ErrorCode.PassMessage, ex.Message);
+                WriteToLog(ex);
+                return;
+            }
+        }
+
+        public static void UpdateJsonInfo(string mapName, string jsonPath)
+        {
+            if (!File.Exists(jsonInfo))
+            {
+                File.WriteAllText(jsonInfo, "");
+            }
+            List<string> lines = File.ReadAllLines(jsonInfo).ToList();
+            foreach (string line in lines)
+            {
+                if (line.Contains("mapName = "))
+                {
+                    return;
+                }
+            }
+            lines.Add(mapName + " = " + jsonPath);
+            File.WriteAllLines(jsonInfo, lines);
+        }
+
+        private void ReadInJsonFileLocations()
+        {
+            if (!File.Exists(jsonInfo))
+            {
+                File.WriteAllText(jsonInfo, "");
+            }
+            List<string> lines = File.ReadAllLines(jsonInfo).ToList();
+            foreach (string line in lines)
+            {
+                string[] split = line.Split(" = ");
+                string name = split[0];
+                string json = split[1];
+                for (int i = 0; i < maps.Count; i++)
+                {
+                    if (maps[i].name == name)
+                    {
+                        bool selected = selectedMap.Equals(maps[i]);
+                        BeamMap newMap = new BeamMap();
+                        newMap.name = maps[i].name;
+                        newMap.savedInfo = maps[i].savedInfo;
+                        newMap.path = maps[i].path;
+                        newMap.previews = maps[i].previews;
+                        newMap.unzippedInfo = maps[i].unzippedInfo;
+                        newMap.jsonInfo = json;
+                        maps[i] = newMap;
+                        if (selected)
+                        {
+                            SelectMap(maps[i]);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static string GetReadableName(string path)
+        {
+            string readableName = Path.GetFileNameWithoutExtension(path);
+            readableName = readableName.Replace("_", " ");
+            TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
+            readableName = myTI.ToTitleCase(readableName);
+            return readableName;
+        }
+
+        void AddToMapSelector(string readableMap)
+        {
+            MapSelector.Items.Add(readableMap);
+        }
+
+        public static void AddToMapSelectorLater(string readableMap)
+        {
+            mapNamesToAddLater.Add(readableMap);
+        }
+
+        public static void AddToMaps(BeamMap beamMap)
+        {
+            maps.Add(beamMap);
+        }
+
+        public static void WriteToLog(string message)
         {
             string file = "";
             if (File.Exists(logFile))
@@ -65,7 +179,7 @@ namespace BeamMPServerLauncher
             File.WriteAllText(logFile, file);
         }
 
-        private void WriteToLog(string[] messages)
+        public static void WriteToLog(string[] messages)
         {
             string file = "";
             if (File.Exists(logFile))
@@ -81,7 +195,7 @@ namespace BeamMPServerLauncher
             File.WriteAllText(logFile, file);
         }
 
-        private void WriteToLog(Exception exception) 
+        public static void WriteToLog(Exception exception)
         {
             string file = "";
             if (File.Exists(logFile))
@@ -107,39 +221,9 @@ namespace BeamMPServerLauncher
             {
                 Directory.CreateDirectory(launcherDataDir);
             }
-
-            string[] dirs = { "mapDir = " + mapDir, "modDir = " + modDir, "dataDir = " + launcherDataDir, "serverConfig = " + serverConfigFile,
-                    "resourceDir = " + resourceDir, "logFile = " + logFile };
-            //WriteToLog(dirs);
         }
 
-        private string[] ReadInPreviewFilenames(string infoPath)
-        {
-            string[] previews;
-            string infoJson = File.ReadAllText(infoPath);
-            string previewsString = infoJson.Split("\"previews\":[")[1];
-            previewsString = previewsString.Split("]")[0];
-            previews = previewsString.Split(',');
-            for (int i = 0; i < previews.Length; i++)
-            {
-                string cleanedPreview = previews[i].Trim();
-                cleanedPreview = cleanedPreview.Replace("\"", "");
-                previews[i] = cleanedPreview;
-                WriteToLog(cleanedPreview);
-            }
-
-            return previews;
-        }
-
-        private string[] GetStoredPreviews(BeamMap beamMap)
-        {
-            List<string> files = Directory.GetFiles(beamMap.unzippedInfo).ToList();
-            files.Remove(Path.Combine(beamMap.unzippedInfo, "info.json"));
-            WriteToLog(files.ToArray());
-            return files.ToArray();
-        }
-
-        private void SetNewPreviewFile(BeamMap beamMap)
+        void SetNewPreviewFile(BeamMap beamMap)
         {
             //is the preview image already set to one of these images?
             if (MapPreview.ImageLocation != null && beamMap.previews.Contains(MapPreview.ImageLocation))
@@ -170,22 +254,26 @@ namespace BeamMPServerLauncher
                 {
                     MapPreview.ImageLocation = beamMap.previews[0];
                 }
-                catch(IndexOutOfRangeException ex)
+                catch (IndexOutOfRangeException ex)
                 {
                     ErrorWindow errorWindow = new ErrorWindow(ErrorCode.PreviewsNotFound, ex.Message);
                     WriteToLog("Had a problem loading image previews.\n\tMapPreview.ImageLocation = " + MapPreview.ImageLocation + "\n\t" + ex.Message);
                 }
             }
+            else
+            {
+                MapPreview.ImageLocation = beamMap.previews[0];
+            }
         }
 
-        private void SelectMap(BeamMap beamMap)
+        void SelectMap(BeamMap beamMap)
         {
             selectedMap = beamMap;
-            MapSelector.Text = beamMap.name;
+            instance.MapSelector.Text = beamMap.name;
             SetNewPreviewFile(selectedMap);
         }
 
-        private void SelectMap(string mapName)
+        void SelectMap(string mapName)
         {
             foreach (BeamMap map in maps)
             {
@@ -197,80 +285,9 @@ namespace BeamMPServerLauncher
             }
         }
 
-        private void ReadInMapOptions()
+        public static void SelectMapLater(BeamMap beamMap)
         {
-            bool firstTime = true;
-            string[] files = Directory.GetFiles(mapDir);
-            for (int i = 0; i < files.Length; i++) 
-            //foreach (string map in Directory.GetFiles(mapDir))
-            {
-                //update progress bar steps
-                progress.SetStepValue(100 / files.Length);
-                progress.WriteToProgressWindow("Need to uzip " + files.Length + "...", false);
-
-                //create the new map object and save path
-                BeamMap beamMap = new BeamMap();
-                beamMap.path = files[i];
-                //get the human readable name and save it
-                string readableMap = GetReadableName(files[i]);
-                MapSelector.Items.Add(readableMap);
-                beamMap.name = readableMap;
-                string[] unzippedInfo = SaveUnzippedInfo(beamMap);
-                beamMap.unzippedInfo = unzippedInfo[0];
-                beamMap.jsonInfo = unzippedInfo[1];
-                beamMap.savedInfo = Path.Combine(beamMap.unzippedInfo, "info.json");
-                beamMap.previews = GetStoredPreviews(beamMap);
-
-                //select first map in list
-                if (firstTime)
-                {
-                    SelectMap(beamMap);
-                    firstTime = false;
-                }
-            }
-        }
-
-        private string[] SaveUnzippedInfo(BeamMap beamMap)
-        {
-            string unzippedInfo = Path.Combine(launcherDataDir, beamMap.name);
-            string infoJsonPath = "";
-            if (!Directory.Exists(unzippedInfo))
-            {
-                string nameNoExt = Path.GetFileNameWithoutExtension(beamMap.path);
-                string unzippedFile = Path.Combine(unzippedInfo, "zipFile");
-                progress.WriteToProgressWindow("Unzipping " + nameNoExt + "...", true);
-                Directory.CreateDirectory(unzippedFile);
-                ZipFile.ExtractToDirectory(beamMap.path, unzippedFile);
-
-                string levelsParent = Path.Combine(unzippedFile, "levels");
-                string[] dirs = Directory.GetDirectories(levelsParent);
-                string levelsPath = Path.Combine(levelsParent, dirs[0]);
-                string infoPath = Path.Combine(levelsPath, "info.json");
-                string newInfoPath = Path.Combine(unzippedInfo, "info.json");
-                File.Move(infoPath, newInfoPath);
-                string[] previews = ReadInPreviewFilenames(newInfoPath);
-                progress.WriteToProgressWindow("Done unzipping " + nameNoExt + ".", false);
-                foreach (string previewFile in previews)
-                {
-                    string previewPath = Path.Combine(levelsPath, previewFile);
-                    File.Move(previewPath, Path.Combine(unzippedInfo, previewFile));
-                }
-                var dir = new DirectoryInfo(@unzippedFile);
-                dir.Delete(true);
-
-                infoJsonPath = Path.Combine("levels", Path.GetFileName(dirs[0]), "info.json");
-            }
-            string[] unzipAndJson = { unzippedInfo, infoJsonPath };
-            return unzipAndJson;
-        }
-
-        private string GetReadableName(string path)
-        {
-            string readableName = Path.GetFileNameWithoutExtension(path);
-            readableName = readableName.Replace("_", " ");
-            TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
-            readableName = myTI.ToTitleCase(readableName);
-            return readableName;
+            mapToSelectLater = beamMap;
         }
 
         private void ReadInServerInfo(BeamMap beamMap)
@@ -281,12 +298,12 @@ namespace BeamMPServerLauncher
             {
                 serverConfig = File.ReadAllText(serverConfigFile);
             }
-            catch (System.IO.FileNotFoundException ex) 
+            catch (System.IO.FileNotFoundException ex)
             {
                 ErrorWindow error = new ErrorWindow(ErrorCode.ServerNotFound, ex.Message);
                 return;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ErrorWindow error = new ErrorWindow(ErrorCode.Unknown, ex.Message);
                 return;
@@ -333,7 +350,7 @@ namespace BeamMPServerLauncher
             string privateStr = serverConfig.Split("Private = ")[1];
             privateStr = privateStr.Split("\n")[0];
             privateStr = privateStr.Trim();
-            serverConfig = serverConfig.Replace("Private = " + privateStr, "Private = " + PrivateCheckbox.Checked.ToString().Trim());
+            serverConfig = serverConfig.Replace("Private = " + privateStr, "Private = " + PrivateCheckbox.Checked.ToString().Trim().ToLower());
 
             //max cars per player
             string maxCarsStr = serverConfig.Split("MaxCars = ")[1];
@@ -348,14 +365,14 @@ namespace BeamMPServerLauncher
             serverConfig = serverConfig.Replace("MaxPlayers = " + maxPlayersStr, "MaxPlayers = " + MaxPlayersBox.Text.Trim());
 
             //Map info file
-            string infoFile = serverConfig.Split("Map = \"")[1];
+            string infoFile = serverConfig.Split("Map = \"")[1]; 
             infoFile = infoFile.Split("\"")[0];
             infoFile = infoFile.Trim();
             try
             {
-                serverConfig = serverConfig.Replace("Map = \"" + infoFile + "\"", "Map = \"" + selectedMap.jsonInfo.Trim() + "\"");
+                serverConfig = serverConfig.Replace("Map = \"/" + infoFile + "\"", "Map = \"/" + selectedMap.jsonInfo.Trim() + "\"");
             }
-            catch(System.NullReferenceException ex)
+            catch (System.NullReferenceException ex)
             {
                 ErrorWindow errorWindow = new ErrorWindow(ErrorCode.MapNotFound, ex.Message);
                 return;
@@ -366,7 +383,7 @@ namespace BeamMPServerLauncher
 
         private void ConfigureMods()
         {
-            foreach(string file in Directory.GetFiles(modDir))
+            foreach (string file in Directory.GetFiles(modDir))
             {
                 string resourceFile = Path.Combine(resourceDir, Path.GetFileName(file));
                 if (!File.Exists(resourceFile))
@@ -375,8 +392,19 @@ namespace BeamMPServerLauncher
                 }
             }
             string mapResourceFile = Path.Combine(resourceDir, Path.GetFileName(selectedMap.path));
+            //ensure resource dir exists
+            if (!Directory.Exists(resourceDir))
+            {
+                Directory.CreateDirectory(resourceDir);
+            }
             if (!File.Exists(mapResourceFile))
             {
+                //delete any pre-existing resource files
+                string[] resourceFiles = Directory.GetFiles(resourceDir);
+                foreach (string file in resourceFiles)
+                {
+                    File.Delete(file);
+                }
                 File.Copy(selectedMap.path, mapResourceFile);
             }
         }
@@ -400,13 +428,28 @@ namespace BeamMPServerLauncher
         {
             ConfigureServer();
             ConfigureMods();
-            Process.Start("BeamMP-Server.exe");
+            try
+            {
+                Process.Start("BeamMP-Server.exe");
+            }
+            catch (System.ComponentModel.Win32Exception ex)
+            {
+                ErrorWindow errorWindow = new ErrorWindow(ErrorCode.BeamMPServerNotFound, ex.Message);
+            }
         }
 
         private void SaveConfigButton_Click(object sender, EventArgs e)
         {
             ConfigureServer();
             ConfigureMods();
+        }
+
+        private void Main_Shown(object sender, EventArgs e)
+        {
+        }
+
+        private void Main_Enter(object sender, EventArgs e)
+        {
         }
     }
 }

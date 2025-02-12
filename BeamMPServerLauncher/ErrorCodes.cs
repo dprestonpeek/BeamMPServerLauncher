@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BeamMPServerLauncher
 {
-    public enum ErrorCode { Unknown, PassMessage, ServerNotFound, MapNotFound, PreviewsNotFound }
+    public enum ErrorCode { Unknown, PassMessage, ServerNotFound, MapNotFound, PreviewsNotFound, BeamMPServerNotFound }
     public struct Error
     {
         public string title = "";
@@ -54,9 +54,17 @@ namespace BeamMPServerLauncher
                     error.okFunc = OkFunction.CloseErrorWindow;
                     error.altFunc = AltFunction.OpenDirectory;
                     break;
+                case ErrorCode.BeamMPServerNotFound:
+                    error.title = "Error - BeamMP-Server.exe not found";
+                    error.message = "Could not locate BeamMP-Server.exe in this directory. Please copy it to this location and try again.";
+                    error.ok = "Ok";
+                    error.alt = "Open Directory";
+                    error.okFunc = OkFunction.CloseErrorWindow;
+                    error.altFunc = AltFunction.OpenDirectory;
+                    break;
                 case ErrorCode.PassMessage:
                     error.title = "Error";
-                    error.message = extraMsg;
+                    error.message = extraMsg + " ";
                     error.ok = "Ok";
                     error.alt = "";
                     error.okFunc = OkFunction.CloseErrorWindow;
