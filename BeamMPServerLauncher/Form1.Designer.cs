@@ -61,8 +61,6 @@
             // 
             // MapSelector
             // 
-            MapSelector.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            MapSelector.AutoCompleteSource = AutoCompleteSource.ListItems;
             MapSelector.FormattingEnabled = true;
             MapSelector.Location = new Point(12, 263);
             MapSelector.MaxDropDownItems = 99;
@@ -92,7 +90,6 @@
             // 
             // ServerDescBox
             // 
-            ServerDescBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             ServerDescBox.Location = new Point(322, 83);
             ServerDescBox.Name = "ServerDescBox";
             ServerDescBox.PlaceholderText = "What players read while considering";
@@ -119,7 +116,6 @@
             // 
             // MaxPlayersBox
             // 
-            MaxPlayersBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             MaxPlayersBox.Location = new Point(322, 136);
             MaxPlayersBox.Name = "MaxPlayersBox";
             MaxPlayersBox.PlaceholderText = "Number of players including AI";
@@ -137,7 +133,6 @@
             // 
             // MaxCarsBox
             // 
-            MaxCarsBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             MaxCarsBox.Location = new Point(322, 189);
             MaxCarsBox.Name = "MaxCarsBox";
             MaxCarsBox.PlaceholderText = "Number of cars per player";
@@ -164,7 +159,6 @@
             // 
             // ServerNameBox
             // 
-            ServerNameBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             ServerNameBox.Location = new Point(322, 30);
             ServerNameBox.Name = "ServerNameBox";
             ServerNameBox.PlaceholderText = "What players see before joining";
@@ -226,7 +220,7 @@
             Controls.Add(StartButton);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Main";
-            Text = "Beam-MP Server Configurator - D. Preston Peek (Version 0.9.0)";
+            Text = "Beam-MP Server Configurator - D. Preston Peek (Version 0.9.5)";
             ((System.ComponentModel.ISupportInitialize)MapPreview).EndInit();
             ResumeLayout(false);
             PerformLayout();
