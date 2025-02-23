@@ -36,7 +36,7 @@ namespace BeamMPServerLauncher
         {
             bool firstTime = true;
             string[] files = Directory.GetFiles(Main.mapDir);
-            UpdateProgressWindow(1, "Need to unzip " + files.Length + " maps...");
+            UpdateProgressWindow(1, "Need to process " + files.Length + " maps...");
             for (int i = 0; i < files.Length; i++)
             //foreach (string map in Directory.GetFiles(mapDir))
             {

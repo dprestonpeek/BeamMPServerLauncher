@@ -220,7 +220,7 @@
             Controls.Add(StartButton);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Main";
-            Text = "Beam-MP Server Configurator - D. Preston Peek (Version 2.12.25)";
+            Text = "Beam-MP Server Configurator - D. Preston Peek (Version 1.02)";
             WindowState = FormWindowState.Minimized;
             Shown += Main_Shown;
             Enter += Main_Enter;

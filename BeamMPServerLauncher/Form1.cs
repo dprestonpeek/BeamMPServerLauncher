@@ -406,11 +406,17 @@ namespace BeamMPServerLauncher
             }
             if (!File.Exists(mapResourceFile))
             {
-                //delete any pre-existing resource files
+                //delete any pre-existing map files
                 string[] resourceFiles = Directory.GetFiles(resourceDir);
                 foreach (string file in resourceFiles)
                 {
-                    File.Delete(file);
+                    for (int i = 0; i < maps.Count; i++)
+                    {
+                        if (Path.GetFileName(maps[i].path) == Path.GetFileName(file))
+                        {
+                            File.Delete(file);
+                        }
+                    }
                 }
                 File.Copy(selectedMap.path, mapResourceFile);
             }
