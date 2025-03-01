@@ -45,6 +45,7 @@
             PrivateCheckbox = new CheckBox();
             SourceButton = new Button();
             SaveConfigButton = new Button();
+            OfflineCheckbox = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)MapPreview).BeginInit();
             SuspendLayout();
             // 
@@ -197,11 +198,22 @@
             SaveConfigButton.UseVisualStyleBackColor = true;
             SaveConfigButton.Click += SaveConfigButton_Click;
             // 
+            // OfflineCheckbox
+            // 
+            OfflineCheckbox.AutoSize = true;
+            OfflineCheckbox.Location = new Point(425, 223);
+            OfflineCheckbox.Name = "OfflineCheckbox";
+            OfflineCheckbox.Size = new Size(97, 19);
+            OfflineCheckbox.TabIndex = 14;
+            OfflineCheckbox.Text = "Offline Server";
+            OfflineCheckbox.UseVisualStyleBackColor = true;
+            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(548, 340);
+            Controls.Add(OfflineCheckbox);
             Controls.Add(SaveConfigButton);
             Controls.Add(SourceButton);
             Controls.Add(PrivateCheckbox);
@@ -220,7 +232,7 @@
             Controls.Add(StartButton);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Main";
-            Text = "Beam-MP Server Configurator - D. Preston Peek (Version 1.02)";
+            Text = "Beam-MP Server Configurator - D. Preston Peek (Version 1.03)";
             WindowState = FormWindowState.Minimized;
             Shown += Main_Shown;
             Enter += Main_Enter;
@@ -247,5 +259,6 @@
         private CheckBox PrivateCheckbox;
         private Button SourceButton;
         private Button SaveConfigButton;
+        private CheckBox OfflineCheckbox;
     }
 }

@@ -38,7 +38,6 @@ namespace BeamMPServerLauncher
             string[] files = Directory.GetFiles(Main.mapDir);
             UpdateProgressWindow(1, "Need to process " + files.Length + " maps...");
             for (int i = 0; i < files.Length; i++)
-            //foreach (string map in Directory.GetFiles(mapDir))
             {
                 //update progress bar steps
                 backgroundWorker1.ReportProgress(1);

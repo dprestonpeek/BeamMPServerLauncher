@@ -320,6 +320,21 @@ namespace BeamMPServerLauncher
             string privateStr = serverConfig.Split("Private = ")[1];
             privateStr = privateStr.Split("\n")[0];
             PrivateCheckbox.Checked = bool.Parse(privateStr);
+            string fullpvtString = "Private = " + privateStr;
+
+            string offlineStr = "";
+            try
+            {
+                offlineStr = serverConfig.Split("Offline = ")[1];
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                serverConfig = serverConfig.Replace(fullpvtString, fullpvtString + "\n" + "Offline = false");
+                File.WriteAllText(serverConfigFile, serverConfig);
+                offlineStr = serverConfig.Split("Offline = ")[1];
+            }
+            offlineStr = offlineStr.Split("\n")[0];
+            OfflineCheckbox.Checked = bool.Parse(offlineStr);
 
             string maxCarsStr = serverConfig.Split("MaxCars = ")[1];
             maxCarsStr = maxCarsStr.Split("\n")[0];
@@ -351,6 +366,12 @@ namespace BeamMPServerLauncher
             privateStr = privateStr.Split("\n")[0];
             privateStr = privateStr.Trim();
             serverConfig = serverConfig.Replace("Private = " + privateStr, "Private = " + PrivateCheckbox.Checked.ToString().Trim().ToLower());
+
+            //offline server option
+            string offlineStr = serverConfig.Split("Offline = ")[1];
+            offlineStr = offlineStr.Split("\n")[0];
+            offlineStr = offlineStr.Trim();
+            serverConfig = serverConfig.Replace("Offline = " + offlineStr, "Offline = " + OfflineCheckbox.Checked.ToString().Trim().ToLower());
 
             //max cars per player
             string maxCarsStr = serverConfig.Split("MaxCars = ")[1];
