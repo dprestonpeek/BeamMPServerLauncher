@@ -41,6 +41,7 @@
             LoadingDetails.Size = new Size(431, 233);
             LoadingDetails.TabIndex = 0;
             LoadingDetails.Text = "";
+            LoadingDetails.UseWaitCursor = true;
             // 
             // LoadingProgressBar
             // 
@@ -49,6 +50,7 @@
             LoadingProgressBar.Size = new Size(431, 28);
             LoadingProgressBar.Style = ProgressBarStyle.Continuous;
             LoadingProgressBar.TabIndex = 1;
+            LoadingProgressBar.UseWaitCursor = true;
             // 
             // backgroundWorker1
             // 
@@ -68,6 +70,7 @@
             Name = "ProgressWindow";
             Text = "Importing Content...";
             TopMost = true;
+            UseWaitCursor = true;
             ResumeLayout(false);
         }
 

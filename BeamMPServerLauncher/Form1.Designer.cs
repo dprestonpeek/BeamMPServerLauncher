@@ -67,6 +67,7 @@
             // 
             // MapSelector
             // 
+            MapSelector.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             MapSelector.FormattingEnabled = true;
             MapSelector.Location = new Point(12, 263);
             MapSelector.MaxDropDownItems = 99;
@@ -77,15 +78,17 @@
             // 
             // MapPreview
             // 
+            MapPreview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             MapPreview.Location = new Point(12, 12);
             MapPreview.Name = "MapPreview";
             MapPreview.Size = new Size(304, 230);
-            MapPreview.SizeMode = PictureBoxSizeMode.Zoom;
+            MapPreview.SizeMode = PictureBoxSizeMode.StretchImage;
             MapPreview.TabIndex = 2;
             MapPreview.TabStop = false;
             // 
             // NextPreviewButton
             // 
+            NextPreviewButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             NextPreviewButton.Location = new Point(272, 259);
             NextPreviewButton.Name = "NextPreviewButton";
             NextPreviewButton.Size = new Size(44, 29);
@@ -96,6 +99,7 @@
             // 
             // ServerDescBox
             // 
+            ServerDescBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ServerDescBox.Location = new Point(322, 83);
             ServerDescBox.Name = "ServerDescBox";
             ServerDescBox.PlaceholderText = "What players read while considering";
@@ -104,6 +108,7 @@
             // 
             // label1
             // 
+            label1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Location = new Point(322, 65);
             label1.Name = "label1";
@@ -113,6 +118,7 @@
             // 
             // label2
             // 
+            label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label2.AutoSize = true;
             label2.Location = new Point(322, 118);
             label2.Name = "label2";
@@ -122,6 +128,7 @@
             // 
             // MaxPlayersBox
             // 
+            MaxPlayersBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             MaxPlayersBox.Location = new Point(322, 136);
             MaxPlayersBox.Name = "MaxPlayersBox";
             MaxPlayersBox.PlaceholderText = "Number of players including AI";
@@ -130,6 +137,7 @@
             // 
             // label3
             // 
+            label3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label3.AutoSize = true;
             label3.Location = new Point(322, 171);
             label3.Name = "label3";
@@ -139,6 +147,7 @@
             // 
             // MaxCarsBox
             // 
+            MaxCarsBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             MaxCarsBox.Location = new Point(322, 189);
             MaxCarsBox.Name = "MaxCarsBox";
             MaxCarsBox.PlaceholderText = "Number of cars per player";
@@ -147,6 +156,7 @@
             // 
             // label4
             // 
+            label4.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             label4.AutoSize = true;
             label4.Location = new Point(12, 245);
             label4.Name = "label4";
@@ -156,6 +166,7 @@
             // 
             // label5
             // 
+            label5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label5.AutoSize = true;
             label5.Location = new Point(322, 12);
             label5.Name = "label5";
@@ -165,6 +176,7 @@
             // 
             // ServerNameBox
             // 
+            ServerNameBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ServerNameBox.Location = new Point(322, 30);
             ServerNameBox.Name = "ServerNameBox";
             ServerNameBox.PlaceholderText = "What players see before joining";
@@ -173,6 +185,7 @@
             // 
             // PrivateCheckbox
             // 
+            PrivateCheckbox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             PrivateCheckbox.AutoSize = true;
             PrivateCheckbox.Location = new Point(322, 223);
             PrivateCheckbox.Name = "PrivateCheckbox";
@@ -183,7 +196,7 @@
             // 
             // SourceButton
             // 
-            SourceButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            SourceButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             SourceButton.Location = new Point(12, 303);
             SourceButton.Name = "SourceButton";
             SourceButton.Size = new Size(67, 25);
@@ -206,6 +219,7 @@
             // 
             // OfflineCheckbox
             // 
+            OfflineCheckbox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             OfflineCheckbox.AutoSize = true;
             OfflineCheckbox.Location = new Point(425, 223);
             OfflineCheckbox.Name = "OfflineCheckbox";
@@ -254,7 +268,7 @@
             // 
             // RefreshButton
             // 
-            RefreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            RefreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             RefreshButton.Location = new Point(85, 303);
             RefreshButton.Name = "RefreshButton";
             RefreshButton.Size = new Size(67, 25);
@@ -292,7 +306,7 @@
             Enabled = false;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Main";
-            Text = "Beam-MP Server Configurator - D. Preston Peek (Version 1.05)";
+            Text = "Beam-MP Server Configurator - D. Preston Peek (Version 1.06)";
             WindowState = FormWindowState.Minimized;
             Shown += Main_Shown;
             Enter += Main_Enter;

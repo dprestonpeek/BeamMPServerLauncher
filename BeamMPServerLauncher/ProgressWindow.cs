@@ -36,13 +36,16 @@ namespace BeamMPServerLauncher
         {
             bool firstTime = true;
             string[] files = Directory.GetFiles(Main.mapDir);
+            string[] mapFolders = Directory.GetDirectories(Main.launcherDataDir);
 
-            //TODO: change files.Length to the number of maps that actually need to be processed
-            UpdateProgressWindow(1, "Need to process " + files.Length + " maps...");
+            //Show the number of maps that actually need to be processed
+            int numProcess = files.Length - mapFolders.Length;
+            //This message won't show until the window is done initializing
+            Thread.Sleep(100);
+            UpdateProgressWindow(1, "Need to process " + numProcess + " map" + (numProcess != 1 ? "s" : "") + "...");
+            
             for (int i = 0; i < files.Length; i++)
             {
-                //update progress bar steps
-                backgroundWorker1.ReportProgress(1);
                 maps = files.Length;
 
                 //create the new map object and save path
@@ -123,7 +126,7 @@ namespace BeamMPServerLauncher
                 string newInfoPath = Path.Combine(unzippedInfo, "info.json");
                 File.Move(infoPath, newInfoPath);
                 string[] previews = ReadInPreviewFilenames(newInfoPath);
-                UpdateProgressWindow("Done unzipping " + nameNoExt + ".");
+                UpdateProgressWindow(100, "Done unzipping " + nameNoExt + ".");
                 foreach (string previewFile in previews)
                 {
                     string previewPath = Path.Combine(levelsPath, previewFile);
@@ -157,7 +160,10 @@ namespace BeamMPServerLauncher
             if (line != lastLine)
             {
                 LoadingDetails.Text += "\n" + line;
-                lastLine = line;
+                if (LoadingDetails.Text.Contains(line))
+                {
+                    lastLine = line;
+                }
             }
         }
 
