@@ -38,6 +38,7 @@ namespace BeamMPServerLauncher
         public static List<BeamMap> maps = new List<BeamMap>();
         ProgressWindow progress;
         Task progressBarTask;
+        Process serverProcess;
 
         public static BeamMap mapToSelectLater = new BeamMap();
         public static List<string> mapNamesToAddLater = new List<string>();
@@ -89,6 +90,9 @@ namespace BeamMPServerLauncher
                 WriteToLog(ex);
                 return;
             }
+            Enabled = true;
+            SaveConfigButton.Enabled = true;
+            StartButton.Enabled = true;
         }
 
         public static void UpdateJsonInfo(string mapName, string jsonPath)
@@ -100,13 +104,37 @@ namespace BeamMPServerLauncher
             List<string> lines = File.ReadAllLines(jsonInfo).ToList();
             foreach (string line in lines)
             {
-                if (line.Contains("mapName = "))
+                if (line.Contains(mapName + " = "))
                 {
                     return;
                 }
             }
             lines.Add(mapName + " = " + jsonPath);
             File.WriteAllLines(jsonInfo, lines);
+        }
+
+        public void RemoveSelectedMap()
+        {
+            RemoveMap(selectedMap);
+        }
+
+        private void RemoveMap(BeamMap map)
+        {
+            var dir = new DirectoryInfo(@map.unzippedInfo);
+            dir.Delete(true);
+            File.Delete(map.path);
+            int index = MapSelector.SelectedIndex;
+            MapSelector.Items.Remove(map.name);
+            maps.Remove(map);
+
+            if (index == 0)
+            {
+                MapSelector.SelectedIndex = index + 1;
+            }
+            else if (index > 0)
+            {
+                MapSelector.SelectedIndex = index - 1;
+            }
         }
 
         private void ReadInJsonFileLocations()
@@ -366,9 +394,20 @@ namespace BeamMPServerLauncher
             privateStr = privateStr.Split("\n")[0];
             privateStr = privateStr.Trim();
             serverConfig = serverConfig.Replace("Private = " + privateStr, "Private = " + PrivateCheckbox.Checked.ToString().Trim().ToLower());
+            string fullpvtString = "Private = " + privateStr;
 
             //offline server option
-            string offlineStr = serverConfig.Split("Offline = ")[1];
+            string offlineStr = "";
+            try
+            {
+                offlineStr = serverConfig.Split("Offline = ")[1];
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                serverConfig = serverConfig.Replace(fullpvtString, fullpvtString + "\n" + "Offline = false");
+                File.WriteAllText(serverConfigFile, serverConfig);
+                offlineStr = serverConfig.Split("Offline = ")[1];
+            }
             offlineStr = offlineStr.Split("\n")[0];
             offlineStr = offlineStr.Trim();
             serverConfig = serverConfig.Replace("Offline = " + offlineStr, "Offline = " + OfflineCheckbox.Checked.ToString().Trim().ToLower());
@@ -398,15 +437,6 @@ namespace BeamMPServerLauncher
                 }
             }
             File.WriteAllLines(serverConfigFile, serverConfigLines);
-            //try
-            //{
-            //    serverConfig = serverConfig.Replace("Map = \"/" + infoFile + "\"", "Map = \"/" + selectedMap.jsonInfo.Trim() + "\"");
-            //}
-            //catch (System.NullReferenceException ex)
-            //{
-            //    ErrorWindow errorWindow = new ErrorWindow(ErrorCode.MapNotFound, ex.Message);
-            //    return;
-            //}
         }
 
         private void ConfigureMods()
@@ -464,12 +494,15 @@ namespace BeamMPServerLauncher
             ConfigureMods();
             try
             {
-                Process.Start("BeamMP-Server.exe");
+                serverProcess = Process.Start("BeamMP-Server.exe");
             }
             catch (System.ComponentModel.Win32Exception ex)
             {
                 ErrorWindow errorWindow = new ErrorWindow(ErrorCode.BeamMPServerNotFound, ex.Message);
             }
+            StopServerButton.Enabled = true;
+            RestartButton.Enabled = true;
+            StartButton.Enabled = false;
         }
 
         private void SaveConfigButton_Click(object sender, EventArgs e)
@@ -484,6 +517,33 @@ namespace BeamMPServerLauncher
 
         private void Main_Enter(object sender, EventArgs e)
         {
+        }
+
+        private void StopServerButton_Click(object sender, EventArgs e)
+        {
+            serverProcess.Kill();
+            serverProcess.Dispose();
+            StopServerButton.Enabled = false;
+            RestartButton.Enabled = false;
+            StartButton.Enabled = true;
+        }
+
+        private void RestartButton_Click(object sender, EventArgs e)
+        {
+            serverProcess.Kill();
+            serverProcess.Dispose();
+            serverProcess = Process.Start("BeamMP-Server.exe");
+        }
+
+        private void RemoveMapButton_Click(object sender, EventArgs e)
+        {
+            ErrorWindow error = new ErrorWindow(ErrorCode.AreYouSureDelete, "");
+        }
+
+        private void RefreshButton_Click(object sender, EventArgs e)
+        {
+            Application.Restart();
+            Environment.Exit(0);
         }
     }
 }

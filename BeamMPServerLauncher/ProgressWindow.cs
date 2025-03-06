@@ -36,6 +36,8 @@ namespace BeamMPServerLauncher
         {
             bool firstTime = true;
             string[] files = Directory.GetFiles(Main.mapDir);
+
+            //TODO: change files.Length to the number of maps that actually need to be processed
             UpdateProgressWindow(1, "Need to process " + files.Length + " maps...");
             for (int i = 0; i < files.Length; i++)
             {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BeamMPServerLauncher
 {
-    public enum ErrorCode { Unknown, PassMessage, ServerNotFound, MapNotFound, PreviewsNotFound, BeamMPServerNotFound }
+    public enum ErrorCode { Unknown, PassMessage, ServerNotFound, MapNotFound, PreviewsNotFound, BeamMPServerNotFound, AreYouSureDelete }
     public struct Error
     {
         public string title = "";
@@ -71,12 +71,20 @@ namespace BeamMPServerLauncher
                     error.altFunc = AltFunction.None;
                     break;
                 case ErrorCode.Unknown:
-                    error.title = "Error = Unknown Error";
+                    error.title = "Error - Unknown Error";
                     error.message = "An unknown error occurred. See log for more info. " + extraMsg;
                     error.ok = "Ok";
                     error.alt = "Open Log File";
                     error.okFunc = OkFunction.CloseErrorWindow;
                     error.altFunc = AltFunction.OpenLog;
+                    break;
+                case ErrorCode.AreYouSureDelete:
+                    error.title = "Are you sure?";
+                    error.message = "Are you sure you want to permanently delete this map? You will not be able to recover it from the Recycle Bin.";
+                    error.ok = "Yes";
+                    error.alt = "Cancel";
+                    error.okFunc = OkFunction.YesDeleteMap;
+                    error.altFunc = AltFunction.CloseErrorWindow;
                     break;
             }
 

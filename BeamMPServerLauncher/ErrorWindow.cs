@@ -11,8 +11,8 @@ using System.Windows.Forms;
 
 namespace BeamMPServerLauncher
 {
-    public enum OkFunction { None, CloseApp, CloseErrorWindow };
-    public enum AltFunction { None, OpenDirectory, OpenLog };
+    public enum OkFunction { None, CloseApp, CloseErrorWindow, YesDeleteMap };
+    public enum AltFunction { None, OpenDirectory, OpenLog, CloseErrorWindow };
     public partial class ErrorWindow : Form
     {
         OkFunction okFunction;
@@ -46,6 +46,10 @@ namespace BeamMPServerLauncher
                 case OkFunction.CloseErrorWindow:
                     Close();
                     break;
+                case OkFunction.YesDeleteMap:
+                    Application.OpenForms.OfType<Main>().FirstOrDefault().RemoveSelectedMap();
+                    Close();
+                    break;
             }
         }
 
@@ -55,6 +59,9 @@ namespace BeamMPServerLauncher
             {
                 case AltFunction.OpenDirectory:
                     Process.Start("explorer.exe", Directory.GetCurrentDirectory());
+                    break;
+                case AltFunction.CloseErrorWindow:
+                    Close();
                     break;
             }
         }

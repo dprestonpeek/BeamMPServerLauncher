@@ -46,15 +46,20 @@
             SourceButton = new Button();
             SaveConfigButton = new Button();
             OfflineCheckbox = new CheckBox();
+            StopServerButton = new Button();
+            RestartButton = new Button();
+            RemoveMapButton = new Button();
+            RefreshButton = new Button();
             ((System.ComponentModel.ISupportInitialize)MapPreview).BeginInit();
             SuspendLayout();
             // 
             // StartButton
             // 
             StartButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            StartButton.Location = new Point(455, 271);
+            StartButton.Enabled = false;
+            StartButton.Location = new Point(455, 248);
             StartButton.Name = "StartButton";
-            StartButton.Size = new Size(81, 57);
+            StartButton.Size = new Size(81, 49);
             StartButton.TabIndex = 6;
             StartButton.Text = "Start Server";
             StartButton.UseVisualStyleBackColor = true;
@@ -190,9 +195,10 @@
             // SaveConfigButton
             // 
             SaveConfigButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            SaveConfigButton.Location = new Point(368, 271);
+            SaveConfigButton.Enabled = false;
+            SaveConfigButton.Location = new Point(368, 248);
             SaveConfigButton.Name = "SaveConfigButton";
-            SaveConfigButton.Size = new Size(81, 57);
+            SaveConfigButton.Size = new Size(81, 49);
             SaveConfigButton.TabIndex = 13;
             SaveConfigButton.Text = "Save Config";
             SaveConfigButton.UseVisualStyleBackColor = true;
@@ -208,11 +214,64 @@
             OfflineCheckbox.Text = "Offline Server";
             OfflineCheckbox.UseVisualStyleBackColor = true;
             // 
+            // StopServerButton
+            // 
+            StopServerButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            StopServerButton.Enabled = false;
+            StopServerButton.ForeColor = Color.Red;
+            StopServerButton.Location = new Point(368, 303);
+            StopServerButton.Name = "StopServerButton";
+            StopServerButton.Size = new Size(81, 25);
+            StopServerButton.TabIndex = 15;
+            StopServerButton.Text = "Stop Server";
+            StopServerButton.UseVisualStyleBackColor = true;
+            StopServerButton.Click += StopServerButton_Click;
+            // 
+            // RestartButton
+            // 
+            RestartButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            RestartButton.Enabled = false;
+            RestartButton.ForeColor = Color.Red;
+            RestartButton.Location = new Point(455, 303);
+            RestartButton.Name = "RestartButton";
+            RestartButton.Size = new Size(81, 25);
+            RestartButton.TabIndex = 16;
+            RestartButton.Text = "Restart";
+            RestartButton.UseVisualStyleBackColor = true;
+            RestartButton.Click += RestartButton_Click;
+            // 
+            // RemoveMapButton
+            // 
+            RemoveMapButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            RemoveMapButton.ForeColor = Color.Red;
+            RemoveMapButton.Location = new Point(216, 303);
+            RemoveMapButton.Name = "RemoveMapButton";
+            RemoveMapButton.Size = new Size(100, 25);
+            RemoveMapButton.TabIndex = 17;
+            RemoveMapButton.Text = "Delete Map";
+            RemoveMapButton.UseVisualStyleBackColor = true;
+            RemoveMapButton.Click += RemoveMapButton_Click;
+            // 
+            // RefreshButton
+            // 
+            RefreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            RefreshButton.Location = new Point(85, 303);
+            RefreshButton.Name = "RefreshButton";
+            RefreshButton.Size = new Size(67, 25);
+            RefreshButton.TabIndex = 18;
+            RefreshButton.Text = "Refresh";
+            RefreshButton.UseVisualStyleBackColor = true;
+            RefreshButton.Click += RefreshButton_Click;
+            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(548, 340);
+            Controls.Add(RefreshButton);
+            Controls.Add(RemoveMapButton);
+            Controls.Add(RestartButton);
+            Controls.Add(StopServerButton);
             Controls.Add(OfflineCheckbox);
             Controls.Add(SaveConfigButton);
             Controls.Add(SourceButton);
@@ -230,9 +289,10 @@
             Controls.Add(MapPreview);
             Controls.Add(MapSelector);
             Controls.Add(StartButton);
+            Enabled = false;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Main";
-            Text = "Beam-MP Server Configurator - D. Preston Peek (Version 1.03)";
+            Text = "Beam-MP Server Configurator - D. Preston Peek (Version 1.05)";
             WindowState = FormWindowState.Minimized;
             Shown += Main_Shown;
             Enter += Main_Enter;
@@ -260,5 +320,9 @@
         private Button SourceButton;
         private Button SaveConfigButton;
         private CheckBox OfflineCheckbox;
+        private Button StopServerButton;
+        private Button RestartButton;
+        private Button RemoveMapButton;
+        private Button RefreshButton;
     }
 }
