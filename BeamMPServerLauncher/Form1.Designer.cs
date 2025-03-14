@@ -48,8 +48,9 @@
             OfflineCheckbox = new CheckBox();
             StopServerButton = new Button();
             RestartButton = new Button();
-            RemoveMapButton = new Button();
+            ReimportMapButton = new Button();
             RefreshButton = new Button();
+            label6 = new Label();
             ((System.ComponentModel.ISupportInitialize)MapPreview).BeginInit();
             SuspendLayout();
             // 
@@ -254,17 +255,17 @@
             RestartButton.UseVisualStyleBackColor = true;
             RestartButton.Click += RestartButton_Click;
             // 
-            // RemoveMapButton
+            // ReimportMapButton
             // 
-            RemoveMapButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            RemoveMapButton.ForeColor = Color.Red;
-            RemoveMapButton.Location = new Point(216, 303);
-            RemoveMapButton.Name = "RemoveMapButton";
-            RemoveMapButton.Size = new Size(100, 25);
-            RemoveMapButton.TabIndex = 17;
-            RemoveMapButton.Text = "Delete Map";
-            RemoveMapButton.UseVisualStyleBackColor = true;
-            RemoveMapButton.Click += RemoveMapButton_Click;
+            ReimportMapButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            ReimportMapButton.ForeColor = Color.Red;
+            ReimportMapButton.Location = new Point(216, 303);
+            ReimportMapButton.Name = "ReimportMapButton";
+            ReimportMapButton.Size = new Size(100, 25);
+            ReimportMapButton.TabIndex = 17;
+            ReimportMapButton.Text = "Reimport Map";
+            ReimportMapButton.UseVisualStyleBackColor = true;
+            ReimportMapButton.Click += ReimportMapButton_Click;
             // 
             // RefreshButton
             // 
@@ -277,13 +278,24 @@
             RefreshButton.UseVisualStyleBackColor = true;
             RefreshButton.Click += RefreshButton_Click;
             // 
+            // label6
+            // 
+            label6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            label6.AutoSize = true;
+            label6.Location = new Point(111, 118);
+            label6.Name = "label6";
+            label6.Size = new Size(111, 15);
+            label6.TabIndex = 19;
+            label6.Text = "No image available.";
+            label6.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(548, 340);
             Controls.Add(RefreshButton);
-            Controls.Add(RemoveMapButton);
+            Controls.Add(ReimportMapButton);
             Controls.Add(RestartButton);
             Controls.Add(StopServerButton);
             Controls.Add(OfflineCheckbox);
@@ -303,10 +315,11 @@
             Controls.Add(MapPreview);
             Controls.Add(MapSelector);
             Controls.Add(StartButton);
+            Controls.Add(label6);
             Enabled = false;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Main";
-            Text = "Beam-MP Server Configurator - D. Preston Peek (Version 1.06)";
+            Text = "Beam-MP Server Configurator - D. Preston Peek (Version 1.07)";
             WindowState = FormWindowState.Minimized;
             Shown += Main_Shown;
             Enter += Main_Enter;
@@ -336,7 +349,8 @@
         private CheckBox OfflineCheckbox;
         private Button StopServerButton;
         private Button RestartButton;
-        private Button RemoveMapButton;
+        private Button ReimportMapButton;
         private Button RefreshButton;
+        private Label label6;
     }
 }

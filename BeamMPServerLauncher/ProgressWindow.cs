@@ -36,10 +36,26 @@ namespace BeamMPServerLauncher
         {
             bool firstTime = true;
             string[] files = Directory.GetFiles(Main.mapDir);
-            string[] mapFolders = Directory.GetDirectories(Main.launcherDataDir);
+            List<string> mapFolders = Directory.GetDirectories(Main.launcherDataDir).ToList();
+            List<string> mapsToReimport = new List<string>();
+
+            foreach (string mapPath in mapFolders) 
+            {
+                //if info.json doesn't exist or a subfolder exists, reimport
+                if (!File.Exists(Path.Combine(mapPath, "info.json"))
+                    || Directory.GetDirectories(mapPath).Length > 0)
+                {
+                    Main.RemoveMapData(mapPath);
+                }
+            }
+            //remove the map folder
+            foreach (string mapToReimport in mapsToReimport)
+            {
+                mapFolders.Remove(mapToReimport);
+            }
 
             //Show the number of maps that actually need to be processed
-            int numProcess = files.Length - mapFolders.Length;
+            int numProcess = files.Length - mapFolders.Count;
             //This message won't show until the window is done initializing
             Thread.Sleep(100);
             UpdateProgressWindow(1, "Need to process " + numProcess + " map" + (numProcess != 1 ? "s" : "") + "...");

@@ -12,17 +12,24 @@ namespace BeamMPServerLauncher
 {
     public struct BeamMap
     {
+        //where the map.zip lives
         public string path;
+        //the readable name of the map
         public string name;
+        //the saved info.json file
         public string savedInfo;
+        //the original info.json file (i think?)
         public string jsonInfo;
+        //the image previews
         public string[] previews;
+        //the unzipped map folder
         public string unzippedInfo;
     }
 
     public partial class Main : Form
     {
         public static BeamMap selectedMap;
+        public static BeamMap none;
 
         public static string mapDir = Path.Combine(Directory.GetCurrentDirectory(), "maps");
         public static string modDir = Path.Combine(Directory.GetCurrentDirectory(), "mods");
@@ -116,6 +123,12 @@ namespace BeamMPServerLauncher
         public void RemoveSelectedMap()
         {
             RemoveMap(selectedMap);
+        }
+
+        public static void RemoveMapData(string mapFolder)
+        {
+            var dir = new DirectoryInfo(@mapFolder);
+            dir.Delete(true);
         }
 
         private void RemoveMap(BeamMap map)
@@ -253,6 +266,12 @@ namespace BeamMPServerLauncher
 
         void SetNewPreviewFile(BeamMap beamMap)
         {
+            MapPreview.Visible = true;
+            if (beamMap.savedInfo == null)
+            {
+                MapPreview.Visible = false;
+                return;
+            }
             //is the preview image already set to one of these images?
             if (MapPreview.ImageLocation != null && beamMap.previews.Contains(MapPreview.ImageLocation))
             {
@@ -284,8 +303,10 @@ namespace BeamMPServerLauncher
                 }
                 catch (IndexOutOfRangeException ex)
                 {
-                    ErrorWindow errorWindow = new ErrorWindow(ErrorCode.PreviewsNotFound, ex.Message);
-                    WriteToLog("Had a problem loading image previews.\n\tMapPreview.ImageLocation = " + MapPreview.ImageLocation + "\n\t" + ex.Message);
+                    //ErrorWindow errorWindow = new ErrorWindow(ErrorCode.PreviewsNotFound, ex.Message);
+                    //WriteToLog("Had a problem loading image previews.\n\tMapPreview.ImageLocation = " + MapPreview.ImageLocation + "\n\t" + ex.Message);
+
+                    MapPreview.Visible = false;
                 }
             }
             else
@@ -473,6 +494,20 @@ namespace BeamMPServerLauncher
             }
         }
 
+        private string GetMapPath(BeamMap map)
+        {
+            List<string> mapFolders = Directory.GetDirectories(launcherDataDir).ToList();
+
+            foreach (string mapPath in mapFolders)
+            {
+                if (map.unzippedInfo == mapPath)
+                {
+                    return mapPath;
+                }
+            }
+            return "";
+        }
+
         private void SourceButton_Click(object sender, EventArgs e)
         {
             Process.Start("explorer.exe", Directory.GetCurrentDirectory());
@@ -535,12 +570,22 @@ namespace BeamMPServerLauncher
             serverProcess = Process.Start("BeamMP-Server.exe");
         }
 
-        private void RemoveMapButton_Click(object sender, EventArgs e)
+        private void ReimportMapButton_Click(object sender, EventArgs e)
         {
-            ErrorWindow error = new ErrorWindow(ErrorCode.AreYouSureDelete, "");
+            //ErrorWindow error = new ErrorWindow(ErrorCode.AreYouSureDelete, "");
+            if (!selectedMap.Equals(none))
+            {
+                RemoveMapData(GetMapPath(selectedMap));
+                RefreshApp();
+            }
         }
 
         private void RefreshButton_Click(object sender, EventArgs e)
+        {
+            RefreshApp();
+        }
+
+        private void RefreshApp()
         {
             Application.Restart();
             Environment.Exit(0);
