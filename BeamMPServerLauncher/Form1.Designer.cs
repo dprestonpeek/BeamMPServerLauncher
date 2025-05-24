@@ -228,6 +228,7 @@
             OfflineCheckbox.TabIndex = 14;
             OfflineCheckbox.Text = "Offline Server";
             OfflineCheckbox.UseVisualStyleBackColor = true;
+            OfflineCheckbox.Visible = false;
             // 
             // StopServerButton
             // 

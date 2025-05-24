@@ -374,16 +374,19 @@ namespace BeamMPServerLauncher
             string offlineStr = "";
             try
             {
-                offlineStr = serverConfig.Split("Offline = ")[1];
+                //offlineStr = serverConfig.Split("Offline = ")[1];
             }
             catch (IndexOutOfRangeException ex)
             {
-                serverConfig = serverConfig.Replace(fullpvtString, fullpvtString + "\n" + "Offline = false");
-                File.WriteAllText(serverConfigFile, serverConfig);
-                offlineStr = serverConfig.Split("Offline = ")[1];
+                //serverConfig = serverConfig.Replace(fullpvtString, fullpvtString + "\n" + "Offline = false");
+                //File.WriteAllText(serverConfigFile, serverConfig);
+                //offlineStr = serverConfig.Split("Offline = ")[1];
             }
-            offlineStr = offlineStr.Split("\n")[0];
-            OfflineCheckbox.Checked = bool.Parse(offlineStr);
+            //offlineStr = offlineStr.Split("\n")[0];
+            //OfflineCheckbox.Checked = bool.Parse(offlineStr);
+            
+            File.WriteAllText(serverConfigFile, serverConfig);
+
 
             string maxCarsStr = serverConfig.Split("MaxCars = ")[1];
             maxCarsStr = maxCarsStr.Split("\n")[0];
